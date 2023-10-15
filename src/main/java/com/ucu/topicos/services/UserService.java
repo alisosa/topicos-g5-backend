@@ -1,28 +1,42 @@
 package com.ucu.topicos.services;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
-import com.google.firebase.auth.UserRecord.CreateRequest;
 import com.ucu.topicos.model.ERole;
 import com.ucu.topicos.model.User;
 import com.ucu.topicos.repository.UserRepository;
 import dtos.RegistrationRequest;
+import dtos.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RegisterService {
-
-    private static final Logger logger = LoggerFactory.getLogger(RegisterService.class);
-
+public class UserService {
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
+    public UserDTO verifyToken(String idToken) {
+        FirebaseToken decodedToken = null;
+        User user = null;
+        try {
+            decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+             user = userRepository.findById(decodedToken.getUid()).orElseThrow();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (decodedToken != null) {
+            return new UserDTO(decodedToken.getUid(), user.getRole().toString());
+        }
+        return null;
+    }
 
     public void registerUser(RegistrationRequest registrationRequest) {
         try {
-            CreateRequest request = new CreateRequest()
+            UserRecord.CreateRequest request = new UserRecord.CreateRequest()
                     .setEmail(registrationRequest.getEmail())
                     .setPassword(registrationRequest.getPassword());
 
