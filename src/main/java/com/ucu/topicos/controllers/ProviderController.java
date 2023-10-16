@@ -20,14 +20,14 @@ public class ProviderController {
 
     @GetMapping
     public ResponseEntity<Object> getProviders(
-            @RequestParam (required = false) String nombre,
+            @RequestParam (required = false) String name,
             @RequestParam (required = false) String rut,
-            @RequestParam (required = false) Integer puntajeDesde,
-            @RequestParam (required = false) Integer puntajeHasta,
+            @RequestParam (required = false) Integer scoreFrom,
+            @RequestParam (required = false) Integer scoreTo,
             @RequestParam (required = false) Integer offset
     ){
         try{
-            ProvidersResponse response = this.providerService.getProviders(nombre, rut, puntajeDesde, puntajeHasta, offset);
+            ProvidersResponse response = this.providerService.getProviders(name, rut, scoreFrom, scoreTo, offset);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
