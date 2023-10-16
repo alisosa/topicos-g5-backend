@@ -1,7 +1,8 @@
 package com.ucu.topicos.model;
 
-import jakarta.persistence.*;
 import lombok.Data;
+
+import javax.persistence.*;
 
 @Entity
 @Data
