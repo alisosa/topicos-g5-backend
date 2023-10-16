@@ -2,12 +2,10 @@ package com.ucu.topicos;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
-@SpringBootApplication
+@SpringBootApplication()
 public class TopicosApplication {
-
-	String test = "test";
-
 	public static void main(String[] args) {
 		SpringApplication.run(TopicosApplication.class, args);
 	}
