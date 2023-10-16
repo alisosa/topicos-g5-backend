@@ -1,6 +1,10 @@
 package com.ucu.topicos.model;
 
-import jakarta.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import lombok.Data;
 
 @Entity
@@ -14,5 +18,5 @@ public class ProviderEntity {
     private String name;
     private String rut;
     private Integer score;
-
+    private String logo;
 }

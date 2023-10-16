@@ -8,4 +8,5 @@ public class Provider {
     private String name;
     private String rut;
     private Integer score;
+    private String logo;
 }
