@@ -30,6 +30,7 @@ public class ProviderMapper {
         response.setName(providerEntity.getName());
         response.setRut(providerEntity.getRut());
         response.setScore(providerEntity.getScore());
+        response.setLogo(providerEntity.getLogo());
         return response;
     }
 }
