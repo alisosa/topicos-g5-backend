@@ -1,0 +1,10 @@
+com/ucu/topicos/config/FirebaseConfig.class
+com/ucu/topicos/services/UserService.class
+dtos/UserDTO.class
+com/ucu/topicos/exceptions/GlobalExceptionHandler.class
+dtos/RegistrationRequest.class
+com/ucu/topicos/model/ERole.class
+com/ucu/topicos/repository/UserRepository.class
+com/ucu/topicos/TopicosApplication.class
+com/ucu/topicos/controllers/UserController.class
+com/ucu/topicos/model/User.class
