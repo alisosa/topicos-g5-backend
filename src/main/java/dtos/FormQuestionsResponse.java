@@ -3,11 +3,12 @@ package dtos;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 public class FormQuestionsResponse {
 
-    private String question;
-    private String type;
-    private boolean scorable;
+    private List<Question> questions;
+
 }

@@ -5,10 +5,10 @@ import lombok.Data;
 
 import java.util.List;
 
-
 @Data
 @AllArgsConstructor
-public class FormQuestionRequest {
+public class ProviderRequest {
 
+    private Provider provider;
     private List<Question> questions;
 }

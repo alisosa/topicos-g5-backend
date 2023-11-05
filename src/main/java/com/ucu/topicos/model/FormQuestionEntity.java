@@ -14,5 +14,11 @@ public class FormQuestionEntity {
     private Long id;
     private String question;
     private String type;
-    private boolean scorable;
+
+    public FormQuestionEntity (){};
+
+    public FormQuestionEntity (String question, String type){
+        this.question = question;
+        this.type = type;
+    }
 }
