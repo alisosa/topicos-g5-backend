@@ -17,6 +17,6 @@ public class ProviderEntity {
     private Long id;
     private String name;
     private String rut;
-    private Integer score;
+    private Double score;
     private String logo;
 }
