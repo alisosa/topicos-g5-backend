@@ -61,6 +61,8 @@ public class ProviderService {
         toSaveEntity.setName(dto.getProvider().getName());
         toSaveEntity.setLogo(dto.getProvider().getLogo());
         toSaveEntity.setRut(dto.getProvider().getRut());
+        toSaveEntity.setAddress(dto.getProvider().getAddress());
+        toSaveEntity.setEmail(dto.getProvider().getEmail());
 
         //calculo score
         double scoreByQuestion = 100 / dto.getQuestions().size();
@@ -68,5 +70,32 @@ public class ProviderService {
         toSaveEntity.setScore(scoreByQuestion * scorableQuestions);
 
         this.providerRepository.save(toSaveEntity);
+    }
+
+
+    public Provider getProvider (String rut){
+
+        try{
+            Provider response = new Provider();
+
+            List<ProviderEntity> providers = providerRepository.findAll();
+
+            List<ProviderEntity> filteredProviders = providers.stream()
+                    .filter(p -> null == rut || p.getRut().contains(rut))
+                    .collect(Collectors.toList());
+
+            if (!filteredProviders.isEmpty()){
+                response.setLogo(filteredProviders.get(0).getLogo());
+                response.setName(filteredProviders.get(0).getName());
+                response.setRut(filteredProviders.get(0).getRut());
+                response.setEmail(filteredProviders.get(0).getEmail());
+                response.setAddress(filteredProviders.get(0).getAddress());
+            }
+
+            return response;
+
+        }catch (Exception e){
+            return null;
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.ucu.topicos.controllers;
 
 
 import com.ucu.topicos.services.ProviderService;
+import dtos.Provider;
 import dtos.ProviderRequest;
 import dtos.ProvidersResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,17 @@ public class ProviderController {
             this.providerService.addProvider(dto);
             return new ResponseEntity<>(HttpStatus.OK);
 
+        }catch (Exception e){
+            return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/{rut}")
+    public ResponseEntity<Object> getProviders(
+            @PathVariable String rut){
+        try{
+            Provider response = this.providerService.getProvider(rut);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
         }

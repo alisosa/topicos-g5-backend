@@ -19,4 +19,6 @@ public class ProviderEntity {
     private String rut;
     private Double score;
     private String logo;
+    private String address;
+    private String email;
 }

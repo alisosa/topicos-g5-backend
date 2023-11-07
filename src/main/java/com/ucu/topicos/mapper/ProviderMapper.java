@@ -31,6 +31,8 @@ public class ProviderMapper {
         response.setRut(providerEntity.getRut());
         response.setScore(providerEntity.getScore());
         response.setLogo(providerEntity.getLogo());
+        response.setAddress(providerEntity.getAddress());
+        response.setEmail(providerEntity.getEmail());
         return response;
     }
 }
