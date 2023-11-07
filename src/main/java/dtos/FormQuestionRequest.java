@@ -1,15 +1,20 @@
 package dtos;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 import java.util.List;
 
 
-@Data
-@AllArgsConstructor
+
 public class FormQuestionRequest {
 
     private List<Question> questions;
+
+    public FormQuestionRequest (){}
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
+    }
 }

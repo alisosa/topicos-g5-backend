@@ -33,7 +33,7 @@ public class ProviderController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Object> addProvider (ProviderRequest dto){
+    public ResponseEntity<Object> addProvider (@RequestBody ProviderRequest dto){
         try{
             this.providerService.addProvider(dto);
             return new ResponseEntity<>(HttpStatus.OK);

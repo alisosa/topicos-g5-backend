@@ -1,11 +1,7 @@
 package dtos;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
-@Data
-@AllArgsConstructor
+
 public class Question {
 
     private String question;
@@ -17,10 +13,27 @@ public class Question {
         this.type = type;
     }
 
-    public Question (String question, String type, boolean scorable){
-        this.question = question;
-        this.type = type;
-        this.scorable = scorable;
+    public String getQuestion() {
+        return question;
     }
 
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Boolean getScorable() {
+        return scorable;
+    }
+
+    public void setScorable(Boolean scorable) {
+        this.scorable = scorable;
+    }
 }

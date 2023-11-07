@@ -6,10 +6,7 @@ import dtos.FormQuestionsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/form")
@@ -29,7 +26,7 @@ public class FormController {
     }
 
     @PutMapping ("/update")
-    public ResponseEntity<Object> updateQuestionToForm(FormQuestionRequest requestDto){
+    public ResponseEntity<Object> updateQuestionToForm(@RequestBody FormQuestionRequest requestDto){
         try{
             this.formService.updateQuestionToForm(requestDto);
             return new ResponseEntity<>(HttpStatus.OK);
