@@ -49,6 +49,9 @@ public class ProviderController {
             @PathVariable String rut){
         try{
             Provider response = this.providerService.getProvider(rut);
+            if (response == null){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);

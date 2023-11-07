@@ -90,6 +90,8 @@ public class ProviderService {
                 response.setRut(filteredProviders.get(0).getRut());
                 response.setEmail(filteredProviders.get(0).getEmail());
                 response.setAddress(filteredProviders.get(0).getAddress());
+            }else {
+                return null;
             }
 
             return response;
