@@ -49,9 +49,14 @@ public class ProviderService {
     public void addProvider (ProviderRequest dto){
 
         ProviderEntity toSaveEntity = new ProviderEntity();
-        ProviderEntity providerInDb = providerRepository.findByRUT(dto.getProvider().getRut());
-        if (providerInDb != null){
-            toSaveEntity = providerInDb;
+        List<ProviderEntity> providers = providerRepository.findAll();
+
+        List<ProviderEntity> filteredProviders = providers.stream()
+                .filter( p -> p.getRut().contains(dto.getProvider().getRut()))
+                .collect(Collectors.toList());
+
+        if (!filteredProviders.isEmpty()){
+            toSaveEntity = filteredProviders.get(0);
         }
         toSaveEntity.setName(dto.getProvider().getName());
         toSaveEntity.setLogo(dto.getProvider().getLogo());

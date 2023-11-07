@@ -10,5 +10,5 @@ import javax.persistence.QueryHint;
 
 @Repository
 public interface ProviderRepository extends JpaRepository<ProviderEntity, Long> {
-    ProviderEntity findByRUT(String rut);
+    //ProviderEntity findByRUT(String rut);
 }

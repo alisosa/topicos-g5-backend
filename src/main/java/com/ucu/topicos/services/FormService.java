@@ -30,8 +30,11 @@ public class FormService {
 
     public void updateQuestionToForm (FormQuestionRequest dto) throws Exception{
         try {
-            this.formQuestionRepository.deleteAll();
-            this.formQuestionRepository.saveAll(FormMapper.mapToQuestion(dto));
+            if (null != dto.getQuestions()){
+                this.formQuestionRepository.deleteAll();
+                this.formQuestionRepository.saveAll(FormMapper.mapToQuestion(dto));
+            }
+
 
         }catch (Exception e){
             throw new Exception(e.getCause());
