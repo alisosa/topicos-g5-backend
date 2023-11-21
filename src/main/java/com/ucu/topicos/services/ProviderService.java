@@ -30,7 +30,7 @@ public class ProviderService {
             List<ProviderEntity> providers = providerRepository.findAll();
 
             List<ProviderEntity> filteredProviders = providers.stream()
-                    .filter(p -> null == nombre || p.getName().contains(nombre))
+                    .filter(p -> null == nombre.toLowerCase() || p.getName().contains(nombre.toLowerCase()))
                     .filter(p -> null == rut || p.getRut().contains(rut))
                     .filter(p -> null == puntajeDesde || p.getScore() >= puntajeDesde)
                     .filter(p -> null == puntajeHasta || p.getScore() <= puntajeHasta)
