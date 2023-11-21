@@ -22,7 +22,7 @@ public class ProviderService {
 
 
     public ProvidersResponse getProviders (String nombre, String rut,
-                                           Integer puntajeDesde, Integer puntajeHasta, Integer offset){
+                                           Integer puntajeDesde, Integer puntajeHasta, Integer offset, String category){
 
         try{
             ProvidersResponse response = new ProvidersResponse();
@@ -34,6 +34,7 @@ public class ProviderService {
                     .filter(p -> null == rut || p.getRut().contains(rut))
                     .filter(p -> null == puntajeDesde || p.getScore() >= puntajeDesde)
                     .filter(p -> null == puntajeHasta || p.getScore() <= puntajeHasta)
+                    .filter(p -> null == category || p.getCategory().equalsIgnoreCase(category))
                     .collect(Collectors.toList());
 
             response.setPages(filteredProviders.isEmpty() ? 0 : filteredProviders.size() / 9);
