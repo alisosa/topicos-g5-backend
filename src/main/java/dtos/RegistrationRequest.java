@@ -30,4 +30,6 @@ public class RegistrationRequest {
     @NotNull(message = "Role should not be null")
     @NotEmpty(message = "Role should not be empty")
     private String role;
+
+    private String rut;
 }

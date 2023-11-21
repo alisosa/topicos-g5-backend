@@ -1,8 +1,7 @@
 package com.ucu.topicos.controllers;
 
-import com.google.firebase.auth.FirebaseToken;
-import com.ucu.topicos.model.User;
 import com.ucu.topicos.services.UserService;
+import dtos.InviteProviderRequest;
 import dtos.RegistrationRequest;
 import dtos.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +34,16 @@ public class UserController {
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegistrationRequest registerRequest) {
         userService.registerUser(registerRequest);
         return new ResponseEntity<>("User successfully registered", HttpStatus.CREATED);
+    }
+
+    @PostMapping("/inviteProvider")
+    public ResponseEntity<?> inviteProvider(@Valid @RequestBody InviteProviderRequest inviteRequest) {
+        try {
+            userService.inviteProvider(inviteRequest);
+            return new ResponseEntity<>("Invitation sent to user", HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

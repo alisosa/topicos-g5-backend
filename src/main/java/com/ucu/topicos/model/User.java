@@ -11,7 +11,7 @@ public class User {
     @Id
     private String id;
 
-    @Column(length = 255)
+    @Column(length = 255, nullable = true)
     private String name;
 
     @Column(length = 255)
@@ -19,4 +19,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private ERole role;
+
+    @Column(length = 255, nullable = true)
+    private String rut;
 }
