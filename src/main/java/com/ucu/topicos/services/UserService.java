@@ -5,7 +5,9 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
 import com.ucu.topicos.model.ERole;
+import com.ucu.topicos.model.Invitation;
 import com.ucu.topicos.model.User;
+import com.ucu.topicos.repository.InvitationRepository;
 import com.ucu.topicos.repository.UserRepository;
 import dtos.InviteProviderRequest;
 import dtos.RegistrationRequest;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -23,14 +26,16 @@ public class UserService {
     private final UserRepository userRepository;
     private final FirebaseAuth firebaseAuth;
     private final EmailService emailService;
+    private final InvitationRepository invitationRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
-    public UserService(UserRepository userRepository, FirebaseAuth firebaseAuth, EmailService emailService) {
+    public UserService(UserRepository userRepository, FirebaseAuth firebaseAuth, EmailService emailService, InvitationRepository invitationRepository) {
         this.userRepository = userRepository;
         this.firebaseAuth = firebaseAuth;
         this.emailService = emailService;
+        this.invitationRepository = invitationRepository;
     }
 
     public UserDTO verifyToken(String idToken) {
@@ -73,7 +78,7 @@ public class UserService {
     }
 
     @Transactional
-    public void inviteProvider(InviteProviderRequest inviteRequest) {
+    public void inviteProvider(InviteProviderRequest inviteRequest, String inviterId) {
         try {
             if (userRepository.findFirstByRut(inviteRequest.getRut()).isPresent()) {
                 throw new IllegalArgumentException("User with the same RUT already exists");
@@ -95,7 +100,18 @@ public class UserService {
             user.setRut(inviteRequest.getRut());
 
             userRepository.save(user);
+
             logger.info("User information saved in the database");
+
+            UserDTO userDTO = verifyToken(inviterId);
+            User inviter = userRepository.findById(userDTO.getUserId()).orElseThrow();
+
+            Invitation invitation = new Invitation();
+            invitation.setInviter(inviter);
+            invitation.setInvitee(user);
+            invitation.setCreatedAt(LocalDateTime.now());
+            invitation.setUpdatedAt(LocalDateTime.now());
+            invitationRepository.save(invitation);
 
             emailService.sendSimpleMessage(inviteRequest.getEmail(), "Your password is " + password);
             logger.info("Invitation sent to user");

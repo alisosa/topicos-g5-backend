@@ -15,7 +15,6 @@ public class EmailService {
 
     public void sendSimpleMessage(String to, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("nicolasmartinsextocsj@gmail.com");
         message.setTo(to);
         message.setSubject("Invitacion DERES");
         message.setText(text);

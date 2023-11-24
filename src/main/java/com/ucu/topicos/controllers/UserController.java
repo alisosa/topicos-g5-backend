@@ -37,9 +37,9 @@ public class UserController {
     }
 
     @PostMapping("/inviteProvider")
-    public ResponseEntity<?> inviteProvider(@Valid @RequestBody InviteProviderRequest inviteRequest) {
+    public ResponseEntity<?> inviteProvider(@Valid @RequestBody InviteProviderRequest inviteRequest, @RequestHeader("Authorization") String inviterId) {
         try {
-            userService.inviteProvider(inviteRequest);
+            userService.inviteProvider(inviteRequest, inviterId);
             return new ResponseEntity<>("Invitation sent to user", HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
