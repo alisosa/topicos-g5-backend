@@ -30,22 +30,22 @@ public class ProviderService {
     private UserService userService;
 
 
-    public ProvidersResponse getProviders (String inviterId, String nombre, String rut,
+    public ProvidersResponse getProviders (String userId, String nombre, String rut,
                                            Integer puntajeDesde, Integer puntajeHasta,
                                            Integer offset, String category) throws Exception {
 
         try{
             ProvidersResponse response = new ProvidersResponse();
-            UserDTO userDTO = this.userService.verifyToken(inviterId);
+            UserDTO userDTO = this.userService.verifyToken(userId);
             List<ProviderEntity> providers = providerRepository.findAll();
 
             if (userDTO != null){
                 String role = userDTO.getRole();
 
-                if (role.equalsIgnoreCase("Admin")){
+                if (role.equalsIgnoreCase("ADMIN")){
 
                     List<ProviderEntity> filteredProviders = providers.stream()
-                            .filter(p -> null == nombre.toLowerCase() || p.getName().contains(nombre.toLowerCase()))
+                            .filter(p -> null == nombre || p.getName().contains(nombre.toLowerCase()))
                             .filter(p -> null == rut || p.getRut().contains(rut))
                             .filter(p -> null == puntajeDesde || p.getScore() >= puntajeDesde)
                             .filter(p -> null == puntajeHasta || p.getScore() <= puntajeHasta)
@@ -57,11 +57,11 @@ public class ProviderService {
 
                     return response;
                 }
-                if (role.equalsIgnoreCase("Socio")){
+                if (role.equalsIgnoreCase("SOCIO")){
                     List<Invitation> invitations = invitationRepository.findAll();
 
                     List<String> providerRutPerSocio = invitations.stream()
-                            .filter(p -> p.getInviter().equals(userDTO.getUserId()))
+                            .filter(p -> p.getInviter().getId().equals(userDTO.getUserId()))
                             .map(p -> p.getInvitee().getRut())
                             .collect(Collectors.toList());
 
