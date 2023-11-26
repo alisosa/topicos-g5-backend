@@ -27,6 +27,18 @@ public class ProviderService {
         try{
             ProvidersResponse response = new ProvidersResponse();
 
+            //aca deserializar el jwt y obtener el mail del usuario
+
+
+            //obtener la entity del usuario donde email sea el email del jwt
+
+
+            //con el user ir a la tabla de la relacion y obtener todos los id de los proveedores
+
+            //obtener todos los proveedores donde el usuario sea el del email
+
+
+            //aca cambiar e ir a buscar a la tabla de la relacion donde el id sea del usuario en cuestion
             List<ProviderEntity> providers = providerRepository.findAll();
 
             List<ProviderEntity> filteredProviders = providers.stream()

@@ -25,6 +25,7 @@ public class ProviderController {
             @RequestParam (required = false) Integer scoreTo,
             @RequestParam (required = false) Integer offset,
             @RequestParam (required = false) String category
+            // agregar header para recibir el authorization
     ){
         try{
             ProvidersResponse response = this.providerService.getProviders(name, rut, scoreFrom, scoreTo, offset, category);
