@@ -13,6 +13,7 @@ public class Provider {
     private String logo;
     private String address;
     private String email;
+    private String category;
 
     public Provider (String name, String rut, String logo){
         this.name = name;

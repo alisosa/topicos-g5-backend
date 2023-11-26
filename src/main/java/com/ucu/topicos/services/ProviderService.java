@@ -98,6 +98,7 @@ public class ProviderService {
         toSaveEntity.setRut(dto.getProvider().getRut());
         toSaveEntity.setAddress(dto.getProvider().getAddress());
         toSaveEntity.setEmail(dto.getProvider().getEmail());
+        toSaveEntity.setCategory(dto.getProvider().getCategory());
 
         //calculo score
         double scoreByQuestion = 100 / dto.getQuestions().size();
