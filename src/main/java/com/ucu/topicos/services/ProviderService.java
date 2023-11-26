@@ -45,11 +45,11 @@ public class ProviderService {
                 if (role.equalsIgnoreCase("ADMIN")){
 
                     List<ProviderEntity> filteredProviders = providers.stream()
-                            .filter(p -> null == nombre || p.getName().contains(nombre.toLowerCase()))
-                            .filter(p -> null == rut || p.getRut().contains(rut))
-                            .filter(p -> null == puntajeDesde || p.getScore() >= puntajeDesde)
-                            .filter(p -> null == puntajeHasta || p.getScore() <= puntajeHasta)
-                            .filter(p -> null == category || p.getCategory().equalsIgnoreCase(category))
+                            .filter(p -> this.appliesFilter(p.getName(), nombre))
+                            .filter(p -> this.appliesFilter(p.getRut(), rut))
+                            .filter(p -> this.appliesFilter(p.getCategory(), category))
+                            .filter(p -> this.appliesScoreFromFilter(p, puntajeDesde))
+                            .filter(p -> this.appliesScoreToFilter(p, puntajeHasta))
                             .collect(Collectors.toList());
 
                     response.setPages(filteredProviders.isEmpty() ? 0 : filteredProviders.size() / 9);
@@ -67,6 +67,11 @@ public class ProviderService {
 
                     List<ProviderEntity> filteredProviders = providers.stream()
                             .filter(p -> providerRutPerSocio.contains(p.getRut()))
+                            .filter(p -> this.appliesFilter(p.getName(), nombre))
+                            .filter(p -> this.appliesFilter(p.getRut(), rut))
+                            .filter(p -> this.appliesFilter(p.getCategory(), category))
+                            .filter(p -> this.appliesScoreFromFilter(p, puntajeDesde))
+                            .filter(p -> this.appliesScoreToFilter(p, puntajeHasta))
                             .collect(Collectors.toList());
 
                     response.setPages(filteredProviders.isEmpty() ? 0 : filteredProviders.size() / 9);
@@ -79,6 +84,36 @@ public class ProviderService {
         }catch (Exception e){
             throw new Exception();
         }
+    }
+
+    private boolean appliesScoreFromFilter(ProviderEntity p, Integer score) {
+        if (p.getScore() == null){
+            return false;
+        }
+        if (score == null){
+            return true;
+        }
+        return p.getScore() >= score;
+    }
+
+    private boolean appliesScoreToFilter(ProviderEntity p, Integer score) {
+        if (p.getScore() == null){
+            return false;
+        }
+        if (score == null){
+            return true;
+        }
+        return p.getScore() <= score;
+    }
+
+    private boolean appliesFilter(String field, String filter) {
+        if (field == null){
+            return false;
+        }
+        if (filter == null){
+            return true;
+        }
+        return field.contains(filter.toLowerCase());
     }
 
     public void addProvider (ProviderRequest dto){
