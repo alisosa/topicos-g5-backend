@@ -1,29 +1,48 @@
 package com.ucu.topicos.services;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
 import com.ucu.topicos.model.ERole;
+import com.ucu.topicos.model.Invitation;
 import com.ucu.topicos.model.User;
+import com.ucu.topicos.repository.InvitationRepository;
 import com.ucu.topicos.repository.UserRepository;
+import dtos.InviteProviderRequest;
 import dtos.RegistrationRequest;
 import dtos.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class UserService {
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final FirebaseAuth firebaseAuth;
+    private final EmailService emailService;
+    private final InvitationRepository invitationRepository;
+
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
+    @Autowired
+    public UserService(UserRepository userRepository, FirebaseAuth firebaseAuth, EmailService emailService, InvitationRepository invitationRepository) {
+        this.userRepository = userRepository;
+        this.firebaseAuth = firebaseAuth;
+        this.emailService = emailService;
+        this.invitationRepository = invitationRepository;
+    }
 
     public UserDTO verifyToken(String idToken) {
         FirebaseToken decodedToken = null;
         User user = null;
         try {
-            decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+            decodedToken = firebaseAuth.verifyIdToken(idToken);
              user = userRepository.findById(decodedToken.getUid()).orElseThrow();
         } catch (Exception e) {
             e.printStackTrace();
@@ -53,6 +72,50 @@ public class UserService {
             logger.info("User information saved in the database");
 
         } catch (Exception e) {
+            logger.error("Error registering the user: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to register user", e);
+        }
+    }
+
+    @Transactional
+    public void inviteProvider(InviteProviderRequest inviteRequest, String inviterId) {
+        try {
+            if (userRepository.findFirstByRut(inviteRequest.getRut()).isPresent()) {
+                throw new IllegalArgumentException("User with the same RUT already exists");
+            }
+
+            String password = UUID.randomUUID().toString().substring(0, 8);
+            UserRecord.CreateRequest request = new UserRecord.CreateRequest()
+                    .setEmail(inviteRequest.getEmail())
+                    .setPassword(password);
+
+            UserRecord userRecord = firebaseAuth.createUser(request);
+            logger.info("Successfully created a new user: {}", userRecord.getUid());
+
+            User user = new User();
+            user.setId(userRecord.getUid());
+            user.setMail(inviteRequest.getEmail());
+            user.setRole(ERole.PROVEEDOR);
+            user.setName(inviteRequest.getName());
+            user.setRut(inviteRequest.getRut());
+
+            userRepository.save(user);
+
+            logger.info("User information saved in the database");
+
+            UserDTO userDTO = verifyToken(inviterId);
+            User inviter = userRepository.findById(userDTO.getUserId()).orElseThrow();
+
+            Invitation invitation = new Invitation();
+            invitation.setInviter(inviter);
+            invitation.setInvitee(user);
+            invitation.setCreatedAt(LocalDateTime.now());
+            invitation.setUpdatedAt(LocalDateTime.now());
+            invitationRepository.save(invitation);
+
+            emailService.sendSimpleMessage(inviteRequest.getEmail(), "Your password is " + password);
+            logger.info("Invitation sent to user");
+        } catch (FirebaseAuthException e) {
             logger.error("Error registering the user: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to register user", e);
         }
