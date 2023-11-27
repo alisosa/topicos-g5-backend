@@ -1,11 +1,14 @@
 package com.ucu.topicos.services;
 
 import com.ucu.topicos.mapper.ProviderMapper;
+import com.ucu.topicos.model.Invitation;
 import com.ucu.topicos.model.ProviderEntity;
+import com.ucu.topicos.repository.InvitationRepository;
 import com.ucu.topicos.repository.ProviderRepository;
 import dtos.Provider;
 import dtos.ProviderRequest;
 import dtos.ProvidersResponse;
+import dtos.UserDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,30 +23,97 @@ public class ProviderService {
     @Autowired
     private ProviderRepository providerRepository;
 
+    @Autowired
+    private InvitationRepository invitationRepository;
 
-    public ProvidersResponse getProviders (String nombre, String rut,
-                                           Integer puntajeDesde, Integer puntajeHasta, Integer offset){
+    @Autowired
+    private UserService userService;
+
+
+    public ProvidersResponse getProviders (String userId, String nombre, String rut,
+                                           Integer puntajeDesde, Integer puntajeHasta,
+                                           Integer offset, String category) throws Exception {
 
         try{
             ProvidersResponse response = new ProvidersResponse();
-
+            UserDTO userDTO = this.userService.verifyToken(userId);
             List<ProviderEntity> providers = providerRepository.findAll();
 
-            List<ProviderEntity> filteredProviders = providers.stream()
-                    .filter(p -> null == nombre || p.getName().contains(nombre))
-                    .filter(p -> null == rut || p.getRut().contains(rut))
-                    .filter(p -> null == puntajeDesde || p.getScore() >= puntajeDesde)
-                    .filter(p -> null == puntajeHasta || p.getScore() <= puntajeHasta)
-                    .collect(Collectors.toList());
+            if (userDTO != null){
+                String role = userDTO.getRole();
 
-            response.setPages(filteredProviders.isEmpty() ? 0 : filteredProviders.size() / 9);
-            response.setProviders(ProviderMapper.mapProviders(filteredProviders, offset));
+                if (role.equalsIgnoreCase("ADMIN")){
 
-            return response;
+                    List<ProviderEntity> filteredProviders = providers.stream()
+                            .filter(p -> this.appliesFilter(p.getName(), nombre))
+                            .filter(p -> this.appliesFilter(p.getRut(), rut))
+                            .filter(p -> this.appliesFilter(p.getCategory(), category))
+                            .filter(p -> this.appliesScoreFromFilter(p, puntajeDesde))
+                            .filter(p -> this.appliesScoreToFilter(p, puntajeHasta))
+                            .collect(Collectors.toList());
+
+                    response.setPages(filteredProviders.isEmpty() ? 0 : filteredProviders.size() / 9);
+                    response.setProviders(ProviderMapper.mapProviders(filteredProviders, offset));
+
+                    return response;
+                }
+                if (role.equalsIgnoreCase("SOCIO")){
+                    List<Invitation> invitations = invitationRepository.findAll();
+
+                    List<String> providerRutPerSocio = invitations.stream()
+                            .filter(p -> p.getInviter().getId().equals(userDTO.getUserId()))
+                            .map(p -> p.getInvitee().getRut())
+                            .collect(Collectors.toList());
+
+                    List<ProviderEntity> filteredProviders = providers.stream()
+                            .filter(p -> providerRutPerSocio.contains(p.getRut()))
+                            .filter(p -> this.appliesFilter(p.getName(), nombre))
+                            .filter(p -> this.appliesFilter(p.getRut(), rut))
+                            .filter(p -> this.appliesFilter(p.getCategory(), category))
+                            .filter(p -> this.appliesScoreFromFilter(p, puntajeDesde))
+                            .filter(p -> this.appliesScoreToFilter(p, puntajeHasta))
+                            .collect(Collectors.toList());
+
+                    response.setPages(filteredProviders.isEmpty() ? 0 : filteredProviders.size() / 9);
+                    response.setProviders(ProviderMapper.mapProviders(filteredProviders, offset));
+                    return response;
+                }
+            }
+            throw new Exception();
 
         }catch (Exception e){
-            return null;
+            throw new Exception();
         }
+    }
+
+    private boolean appliesScoreFromFilter(ProviderEntity p, Integer score) {
+        if (p.getScore() == null){
+            return false;
+        }
+        if (score == null){
+            return true;
+        }
+        return p.getScore() >= score;
+    }
+
+    private boolean appliesScoreToFilter(ProviderEntity p, Integer score) {
+        if (p.getScore() == null){
+            return false;
+        }
+        if (score == null){
+            return true;
+        }
+        return p.getScore() <= score;
+    }
+
+    private boolean appliesFilter(String field, String filter) {
+        if (field == null){
+            return false;
+        }
+        if (filter == null){
+            return true;
+        }
+        return field.contains(filter.toLowerCase());
     }
 
     public void addProvider (ProviderRequest dto){
@@ -63,6 +133,7 @@ public class ProviderService {
         toSaveEntity.setRut(dto.getProvider().getRut());
         toSaveEntity.setAddress(dto.getProvider().getAddress());
         toSaveEntity.setEmail(dto.getProvider().getEmail());
+        toSaveEntity.setCategory(dto.getProvider().getCategory());
 
         //calculo score
         double scoreByQuestion = 100 / dto.getQuestions().size();

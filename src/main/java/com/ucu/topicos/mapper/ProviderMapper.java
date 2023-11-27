@@ -33,6 +33,7 @@ public class ProviderMapper {
         response.setLogo(providerEntity.getLogo());
         response.setAddress(providerEntity.getAddress());
         response.setEmail(providerEntity.getEmail());
+        response.setCategory(providerEntity.getCategory());
         return response;
     }
 }

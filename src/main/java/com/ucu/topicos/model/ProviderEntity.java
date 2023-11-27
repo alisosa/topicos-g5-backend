@@ -21,4 +21,5 @@ public class ProviderEntity {
     private String logo;
     private String address;
     private String email;
+    private String category;
 }

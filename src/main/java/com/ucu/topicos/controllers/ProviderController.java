@@ -23,10 +23,12 @@ public class ProviderController {
             @RequestParam (required = false) String rut,
             @RequestParam (required = false) Integer scoreFrom,
             @RequestParam (required = false) Integer scoreTo,
-            @RequestParam (required = false) Integer offset
+            @RequestParam (required = false) Integer offset,
+            @RequestParam (required = false) String category,
+            @RequestHeader("Authorization") String userId
     ){
         try{
-            ProvidersResponse response = this.providerService.getProviders(name, rut, scoreFrom, scoreTo, offset);
+            ProvidersResponse response = this.providerService.getProviders(userId, name, rut, scoreFrom, scoreTo, offset, category);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);

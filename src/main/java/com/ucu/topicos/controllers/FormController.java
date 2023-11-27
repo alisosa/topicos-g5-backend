@@ -16,9 +16,9 @@ public class FormController {
     private FormService formService;
 
     @GetMapping("/questions")
-    public ResponseEntity<Object> obtainFormQuestions(){
+    public ResponseEntity<Object> obtainFormQuestions(@RequestHeader(value="Authorization", required = false) String userId){
         try{
-            FormQuestionsResponse response = formService.getQuestions();
+            FormQuestionsResponse response = formService.getQuestions(userId);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
