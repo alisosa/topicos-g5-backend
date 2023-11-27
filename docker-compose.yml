@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  postgresdb:
+  #  container_name: db
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=testdb
+    ports:
+      - '5432:5432'
+  appweb:
+    container_name: appweb
+    image: appweb
+    build: .
+    ports:
+      - '8080:8080'
+    environment:
+      - POSTGRES_URL=jdbc:postgresql://localhost:3306/testdb?useSSL=false&serverTimezone=UTC
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - .:/appweb
+    stdin_open: true
+    tty: true
+    depends_on:
+      - postgresdb
