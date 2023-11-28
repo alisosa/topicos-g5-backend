@@ -31,12 +31,14 @@ public class FormService {
     private UserService userService;
 
     public FormQuestionsResponse getQuestions(String userToken){
-
-        UserDTO userDTO = userService.verifyToken(userToken);
         Provider provider = new Provider();
-        if (userDTO != null){
-            provider.setRut(userDTO.getRut());
-            provider.setEmail(userDTO.getEmail());
+
+        if (userToken != null){
+            UserDTO userDTO = userService.verifyToken(userToken);
+            if (userDTO != null){
+                provider.setRut(userDTO.getRut());
+                provider.setEmail(userDTO.getEmail());
+            }
         }
 
         List<FormQuestionEntity> entities = formQuestionRepository.findAll();

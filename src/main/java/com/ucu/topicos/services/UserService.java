@@ -121,11 +121,6 @@ public class UserService {
                 logger.info("Invitation sent to user");
             }
 
-
-//            throw new IllegalArgumentException("User with the same RUT already exists");
-
-
-
         } catch (FirebaseAuthException e) {
             logger.error("Error registering the user: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to register user", e);
@@ -142,7 +137,5 @@ public class UserService {
         invitation.setCreatedAt(LocalDateTime.now());
         invitation.setUpdatedAt(LocalDateTime.now());
         invitationRepository.save(invitation);
-
-
     }
 }
