@@ -78,7 +78,7 @@ public class UserService {
     }
 
     @Transactional
-    public void inviteProvider(InviteProviderRequest inviteRequest, String inviterId) {
+    public void invite(InviteProviderRequest inviteRequest, String inviterId, ERole role) {
         try {
             if (userRepository.findFirstByRut(inviteRequest.getRut()).isPresent()) {
                 throw new IllegalArgumentException("User with the same RUT already exists");
@@ -95,7 +95,7 @@ public class UserService {
             User user = new User();
             user.setId(userRecord.getUid());
             user.setMail(inviteRequest.getEmail());
-            user.setRole(ERole.PROVEEDOR);
+            user.setRole(role);
             user.setName(inviteRequest.getName());
             user.setRut(inviteRequest.getRut());
 
