@@ -11,6 +11,8 @@ import dtos.Question;
 import dtos.FormQuestionsResponse;
 import dtos.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -59,9 +61,12 @@ public class FormService {
         }
     }
 
-    private void notifyFormChanges() {
-        List<User> users = userRepository.findAll();
-        users.forEach(u -> emailService.sendSimpleMessage(u.getMail(), "El formulario ha sido actualizado y debe volver a completarlo"));
+    protected void notifyFormChanges() {
+        try {
+            List<User> users = userRepository.findAll();
+            users.forEach(u -> emailService.sendSimpleMessage(u.getMail(), "El formulario ha sido actualizado y debe volver a completarlo"));
+        } catch (Exception ignored) {
+        }
     }
 
 
