@@ -113,7 +113,7 @@ public class ProviderService {
         if (filter == null){
             return true;
         }
-        return field.contains(filter.toLowerCase());
+        return field.toLowerCase().contains(filter.toLowerCase());
     }
 
     public void addProvider (ProviderRequest dto){
