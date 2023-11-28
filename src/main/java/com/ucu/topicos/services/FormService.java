@@ -2,7 +2,9 @@ package com.ucu.topicos.services;
 
 import com.ucu.topicos.mapper.FormMapper;
 import com.ucu.topicos.model.FormQuestionEntity;
+import com.ucu.topicos.model.User;
 import com.ucu.topicos.repository.FormQuestionRepository;
+import com.ucu.topicos.repository.UserRepository;
 import dtos.FormQuestionRequest;
 import dtos.Provider;
 import dtos.Question;
@@ -19,6 +21,10 @@ public class FormService {
 
     @Autowired
     private FormQuestionRepository formQuestionRepository;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private UserService userService;
 
@@ -44,12 +50,18 @@ public class FormService {
             if (null != dto.getQuestions()){
                 this.formQuestionRepository.deleteAll();
                 this.formQuestionRepository.saveAll(FormMapper.mapToQuestion(dto));
+                notifyFormChanges();
             }
 
 
         }catch (Exception e){
             throw new Exception(e.getCause());
         }
+    }
+
+    private void notifyFormChanges() {
+        List<User> users = userRepository.findAll();
+        users.forEach(u -> emailService.sendSimpleMessage(u.getMail(), "El formulario ha sido actualizado y debe volver a completarlo"));
     }
 
 

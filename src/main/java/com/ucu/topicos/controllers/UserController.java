@@ -1,5 +1,6 @@
 package com.ucu.topicos.controllers;
 
+import com.ucu.topicos.model.ERole;
 import com.ucu.topicos.services.UserService;
 import dtos.InviteProviderRequest;
 import dtos.RegistrationRequest;
@@ -39,7 +40,17 @@ public class UserController {
     @PostMapping("/inviteProvider")
     public ResponseEntity<?> inviteProvider(@Valid @RequestBody InviteProviderRequest inviteRequest, @RequestHeader("Authorization") String inviterId) {
         try {
-            userService.inviteProvider(inviteRequest, inviterId);
+            userService.invite(inviteRequest, inviterId, ERole.PROVEEDOR);
+            return new ResponseEntity<>("Invitation sent to user", HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/invitePartner")
+    public ResponseEntity<?> invitePartner(@Valid @RequestBody InviteProviderRequest inviteRequest, @RequestHeader("Authorization") String inviterId) {
+        try {
+            userService.invite(inviteRequest, inviterId, ERole.SOCIO);
             return new ResponseEntity<>("Invitation sent to user", HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

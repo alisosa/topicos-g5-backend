@@ -84,8 +84,7 @@ public class UserService {
     }
 
     @Transactional
-    public void inviteProvider(InviteProviderRequest inviteRequest, String inviterId) {
-
+    public void invite(InviteProviderRequest inviteRequest, String inviterId, ERole role) {
         try {
             Optional<User> dataUser = userRepository.findFirstByRut(inviteRequest.getRut());
 
@@ -100,12 +99,12 @@ public class UserService {
                 UserRecord userRecord = firebaseAuth.createUser(request);
                 logger.info("Successfully created a new user: {}", userRecord.getUid());
 
-                User user = new User();
-                user.setId(userRecord.getUid());
-                user.setMail(inviteRequest.getEmail());
-                user.setRole(ERole.PROVEEDOR);
-                user.setName(inviteRequest.getName());
-                user.setRut(inviteRequest.getRut());
+            User user = new User();
+            user.setId(userRecord.getUid());
+            user.setMail(inviteRequest.getEmail());
+            user.setRole(role);
+            user.setName(inviteRequest.getName());
+            user.setRut(inviteRequest.getRut());
 
                 userRepository.save(user);
 
