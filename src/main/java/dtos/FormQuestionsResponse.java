@@ -10,5 +10,6 @@ import java.util.List;
 public class FormQuestionsResponse {
 
     private List<Question> questions;
+    private Provider provider;
 
 }

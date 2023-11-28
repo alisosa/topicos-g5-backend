@@ -6,8 +6,10 @@ import com.ucu.topicos.model.User;
 import com.ucu.topicos.repository.FormQuestionRepository;
 import com.ucu.topicos.repository.UserRepository;
 import dtos.FormQuestionRequest;
+import dtos.Provider;
 import dtos.Question;
 import dtos.FormQuestionsResponse;
+import dtos.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,14 +25,23 @@ public class FormService {
     private EmailService emailService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserService userService;
 
-    public FormQuestionsResponse getQuestions(){
+    public FormQuestionsResponse getQuestions(String userToken){
+
+        UserDTO userDTO = userService.verifyToken(userToken);
+        Provider provider = new Provider();
+        if (userDTO != null){
+            provider.setRut(userDTO.getRut());
+            provider.setEmail(userDTO.getEmail());
+        }
 
         List<FormQuestionEntity> entities = formQuestionRepository.findAll();
 
         List<Question> questions = entities.stream().map(e -> new Question(e.getQuestion(),e.getType())).collect(Collectors.toList());
 
-        return new FormQuestionsResponse(questions);
+        return new FormQuestionsResponse(questions, provider);
     }
 
 
