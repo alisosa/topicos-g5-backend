@@ -20,7 +20,7 @@ public class EmailService {
     public void sendSimpleMessage(String to, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
-        message.setSubject("Invitacion DERES");
+        message.setSubject("Notificacion DERES");
         message.setText(text);
         emailSender.send(message);
     }
